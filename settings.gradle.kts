@@ -21,4 +21,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "My Application"
 include(":app")
+includeBuild("library") {
+    dependencySubstitution {
+        substitute(module("com.example:library"))
+            .using(project(":"))
+    }
+}
  
