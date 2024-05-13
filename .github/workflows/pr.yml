@@ -1,0 +1,35 @@
+name: Pull request workflow
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: Check out java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Run test without shared tests
+        run: ./gradlew :app:lint
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: Reports
+          path: '**/build/reports/*'
+          retention-days: 5
